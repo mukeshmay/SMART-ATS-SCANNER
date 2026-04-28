@@ -27,11 +27,10 @@ export async function POST(req: NextRequest) {
 
     let resumeText: string;
     try {
-      const { PDFParse } = await import("pdf-parse");
+      const { extractText } = await import("unpdf");
       const uint8Array = new Uint8Array(buffer);
-      const parser = new PDFParse({ data: uint8Array });
-      const pdfData = await parser.getText();
-      resumeText = pdfData.text as string;
+      const { text } = await extractText(uint8Array, { mergePages: true });
+      resumeText = text as string;
     } catch {
       return NextResponse.json(
         { error: "Failed to parse PDF. Please ensure it is a valid, text-based PDF file." },
